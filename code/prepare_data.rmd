@@ -1,13 +1,44 @@
-# Match to adriaans data. Clean input to usable matrix with metadata
+# Computing different normalization schemes in R
 ```{r}
-load("~/Documents/data/gs_tcells/gene_expression/count_all_123Samples.Rdata")
-raw.counts <- read.table("data/gsTcell_counttable_t0_t180.txt", sep="\t")
-colnames(raw.counts) <- gsub("\\.", "-",colnames(raw.counts))
+# The original data can found from recount2 database (https://jhubiostatistics.shinyapps.io/recount/) using SRA project code SRP029880.
+# colorectal cancer
 
-ol         <- intersect(colnames(count.all), colnames(raw.counts))
-count.all  <- count.all[,ol]
-raw.counts <- raw.counts[rownames(count.all),ol]
-c          <- cor(count.all, raw.counts)
-diag(c)
+counts_file <- system.file('extdata/rna-seq/SRP029880.raw_counts.tsv',package = 'compGenomRData')
+coldata_file <- system.file('extdata/rna-seq/SRP029880.colData.tsv',package = 'compGenomRData')
+counts <- as.matrix(read.table(counts_file, header = T, sep = '\t'))
+
+# Computing CPM
+cpm <- apply(subset(counts, select = c(-width)), 2 ,function(x) x/sum(as.numeric(x)) * 10^6)
+colSums(cpm)
+
+# Computing RPKM
+# Create a vector of gene lengths
+geneLengths <- as.vector(subset(counts, select = c(width)))
+# compute rpkm
+rpkm <- apply(X = subset(counts, select = c(-width)), MARGIN = 2, FUN = function(x) {
+                  10^9 * x / geneLengths / sum(as.numeric(x))})
+colSums(rpkm)
+
+# Computing TPM
+# find gene length normalised values
+rpk <- apply( subset(counts, slect = c(-width)), 2 , function(x) x/(geneLengths/1000))
+# normalised by sample size using rpk values
+tpm <- apply(rpk, 2 , function(x) x / sum(as.numeric(x)) * 10^6)
+
+colSums(tpm)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 ```
 #

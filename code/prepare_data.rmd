@@ -1,0 +1,13 @@
+# Match to adriaans data. Clean input to usable matrix with metadata
+```{r}
+load("~/Documents/data/gs_tcells/gene_expression/count_all_123Samples.Rdata")
+raw.counts <- read.table("data/gsTcell_counttable_t0_t180.txt", sep="\t")
+colnames(raw.counts) <- gsub("\\.", "-",colnames(raw.counts))
+
+ol         <- intersect(colnames(count.all), colnames(raw.counts))
+count.all  <- count.all[,ol]
+raw.counts <- raw.counts[rownames(count.all),ol]
+c          <- cor(count.all, raw.counts)
+diag(c)
+```
+#

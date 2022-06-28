@@ -17,7 +17,7 @@
 % mkdir ~/projects/GitHub
 % cd /projects/GitHub
 # Clone the gitHub repository to local Directory
-% git clone https://github.com/arshah18/RNAseq-Analysis.git
+% git clone https://github.com/userID/RNAseq-Analysis.git
 % git status
 % git add "file or Directory"
 % git status

@@ -2,15 +2,14 @@
 ```{r}
 # The original data can found from recount2 database (https://jhubiostatistics.shinyapps.io/recount/) using SRA project code SRP029880.
 # colorectal cancer
-
 counts_file <- system.file('extdata/rna-seq/SRP029880.raw_counts.tsv',package = 'compGenomRData')
 coldata_file <- system.file('extdata/rna-seq/SRP029880.colData.tsv',package = 'compGenomRData')
 counts <- as.matrix(read.table(counts_file, header = T, sep = '\t'))
-
+#
 # Computing CPM
 cpm <- apply(subset(counts, select = c(-width)), 2 ,function(x) x/sum(as.numeric(x)) * 10^6)
 colSums(cpm)
-
+#
 # Computing RPKM
 # Create a vector of gene lengths
 geneLengths <- as.vector(subset(counts, select = c(width)))
@@ -18,14 +17,30 @@ geneLengths <- as.vector(subset(counts, select = c(width)))
 rpkm <- apply(X = subset(counts, select = c(-width)), MARGIN = 2, FUN = function(x) {
                   10^9 * x / geneLengths / sum(as.numeric(x))})
 colSums(rpkm)
-
+#
 # Computing TPM
 # find gene length normalised values
 rpk <- apply( subset(counts, slect = c(-width)), 2 , function(x) x/(geneLengths/1000))
 # normalised by sample size using rpk values
 tpm <- apply(rpk, 2 , function(x) x / sum(as.numeric(x)) * 10^6)
-
 colSums(tpm)
+#
+# Clustering
+# Let’s select the top 100 most variable genes among the samples
+# compute the variance of each gene across samples
+V <- apply(tpm, 1, var)
+# sort the results by variance in decreasing order
+# and select the top 100 genes
+selectedGenes <- names(V[order(V, decreasing = T)][1:100])
+# we can quickly produce a heatmap where samples and genes are clustered
+pm, 1, var)
+#sort the results by variance in decreasing order
+#and select the top 100 genes
+selectedGenes <- names(V[order(V, decreasing = T)][1:100])
+# we can quickly produce a heatmap where samples and genes are clustered
+library(pheatmap)
+pheatmap(tpm[selectedGenes,], scale = 'row', show_rownames = FALSE)
+
 
 
 

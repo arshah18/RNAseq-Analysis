@@ -20,7 +20,7 @@ colSums(rpkm)
 #
 # Computing TPM
 # find gene length normalised values
-rpk <- apply( subset(counts, slect = c(-width)), 2 , function(x) x/(geneLengths/1000))
+rpk <- apply( subset(counts, select = c(-width)), 2 , function(x) x/(geneLengths/1000))
 # normalised by sample size using rpk values
 tpm <- apply(rpk, 2 , function(x) x / sum(as.numeric(x)) * 10^6)
 colSums(tpm)
@@ -40,8 +40,12 @@ selectedGenes <- names(V[order(V, decreasing = T)][1:100])
 # we can quickly produce a heatmap where samples and genes are clustered
 library(pheatmap)
 pheatmap(tpm[selectedGenes,], scale = 'row', show_rownames = FALSE)
-
-
+# We can also overlay some annotation tracks to observe the clusters
+colData <- read.table(coldata_file, header = T, sep = '\t',
+stringsAsFactors = TRUE)
+pheatmap(tpm[selectedGenes,], scale = 'row',
+show_rownames = FALSE,
+annotation_col = colData)
 
 
 

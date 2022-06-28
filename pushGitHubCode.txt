@@ -1,0 +1,26 @@
+# How to push gitHub code
+# Setting local desktop repositiry
+% git config --global user.name "GitHub-username"
+% git config --global user.email "youremail@mail.com" 
+% git credential-osxkeychain usage: git credential-osxkeychain
+% ssh-keygen -t rsa -b 4096 -C "youremail@mail.com"
+% cd ~/.ssh 
+% ls
+% eval "$(ssh-agent -s)"
+# Check if the config file is there if not create one
+% ls
+% touch config
+% ssh-add -K ~/.ssh/id_rsa
+% pbcopy < ~/.ssh/id_rsa.pub
+% exit
+#
+% mkdir ~/projects/GitHub
+% cd /projects/GitHub
+# Clone the gitHub repository to local Directory
+% git clone https://github.com/arshah18/RNAseq-Analysis.git
+% git status
+% git add "file or Directory"
+% git status
+% git commit -m 'This is my first git commit on GitHub'
+% git push origin master
+% git push

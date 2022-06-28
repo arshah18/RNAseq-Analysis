@@ -68,6 +68,9 @@ library(corrplot)
 corrplot(correlationMatrix, order = 'hclust' ,
               addrect = 2, addCoef.col = 'white',
               number.cex = 0.7)
+# We could also plot this correlation matrix as a heatmap. Heatmap instead of a corrplot helps to see the differences between samples more easily. The annotation_col argument helps to display sample annotations and the cutree_cols argument is set to 2 to split the clusters into two groups based on the hierarchical clustering results.
+# split the clusters into two based on the clustering similarity
+pheatmap(correlationMatrix, annotation_col = colData, cutree_cols = 2)
 
 
 

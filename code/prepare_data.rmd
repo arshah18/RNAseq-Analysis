@@ -46,6 +46,28 @@ stringsAsFactors = TRUE)
 pheatmap(tpm[selectedGenes,], scale = 'row',
 show_rownames = FALSE,
 annotation_col = colData)
+#
+# PCA
+# Let’s make a PCA plot to see the clustering of replicates as a scatter plot in two dimensions
+library(stats)
+library(ggplot2)
+library(ggfortify)
+M <- t(tpm[selectedGenes,])
+# transform the counts to log2 scale
+M <- log2(M + 1)
+# compute PCA
+pcaResults <- prcomp(M)
+# plot PCA results making use of ggplot2's autoplot function
+# ggfortify is needed to let ggplot2 know about PCA data structure.
+autoplot(pcaResults, data = colData, colour = 'group')
+summary(pcaResults)
+#
+# Corellation plots
+correlationMatrix <- cor(tpm)
+library(corrplot)
+corrplot(correlationMatrix, order = 'hclust' ,
+              addrect = 2, addCoef.col = 'white',
+              number.cex = 0.7)
 
 
 

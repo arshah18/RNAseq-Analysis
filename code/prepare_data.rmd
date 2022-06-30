@@ -82,7 +82,28 @@ Differential expression analysis allows us to test tens of thousands of hypothes
 4.Disperssion values of each gene are shrunk towards the fitted line in step 3.
 5. A generalised Linear Model is fiited which considers additional confounding variables related to the experimental design such as sequencing batches, treatment, temperature, patient's age, sequencing technology, etc., and uses the negative binomial distribution for fitting count data.
 6. For a givem contrast (e.g. treatment type: drug-A versus untreated), a test for differential expression is carried out against the null hypothesis that log fold change of normalised counts of a gene in the given pair of groups is exactly zero.
-7. It adjusts p-values for mutiple-testing
+7. It adjusts p-values for mutiple-testing.
+In order to carry DEA using DESeq2, three kinds of inputs are necessary:
+1. Read count table: raw read counts as integers that are not processed in any form by normalization technique. The rows represent feautures (e.g. genes, transcripts, genomic intervals) and columns represent samples.
+2. coldata table: defines the experimental design.
+3. design formula: needed to describe variable of interest in the analysis (e.g treatment status) along with (optionally) other covariates (e.g. batch, temperature, sequencing technology).
+s (e.g. batch, temperature, sequencing technology).
+Let’s define these inputs:
+# remove the 'width' column
+countData <- as.matrix(subset(counts, select = c(-width)))
+#define the experimental setup
+colData <- read.table(coldata_file, header = T, sep = '\t', stringsAsFactors = TRUE)
+#define the design formula
+designFormula <- "~ group"
+Now, we are ready to run DESeq2
+library(DESeq2)
+library(stats)
+#create a DESeq dataset object from the count matrix and the colData
+dds <- DESeqDataSetFromMatrix(countData = countData,
+colData = colData,
+design = as.formula(designFormula))
+#print dds object to see the contents
+print(dds)
 
 
 

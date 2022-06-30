@@ -13,13 +13,13 @@ colSums(cpm)
 # Computing RPKM
 # Create a vector of gene lengths
 geneLengths <- as.vector(subset(counts, select = c(width)))
-# compute rpkm
+# Compute the rpkm
 rpkm <- apply(X = subset(counts, select = c(-width)), MARGIN = 2, FUN = function(x) {
                   10^9 * x / geneLengths / sum(as.numeric(x))})
 colSums(rpkm)
 #
-# Computing TPM
-# find gene length normalised values
+# Computing the TPM
+# Find gene length normalised values
 rpk <- apply( subset(counts, select = c(-width)), 2 , function(x) x/(geneLengths/1000))
 # normalised by sample size using rpk values
 tpm <- apply(rpk, 2 , function(x) x / sum(as.numeric(x)) * 10^6)
@@ -34,7 +34,7 @@ V <- apply(tpm, 1, var)
 selectedGenes <- names(V[order(V, decreasing = T)][1:100])
 # we can quickly produce a heatmap where samples and genes are clustered
 pm, 1, var)
-#sort the results by variance in decreasing order
+# Sort the results by variance in decreasing order
 #and select the top 100 genes
 selectedGenes <- names(V[order(V, decreasing = T)][1:100])
 # we can quickly produce a heatmap where samples and genes are clustered
@@ -71,6 +71,21 @@ corrplot(correlationMatrix, order = 'hclust' ,
 # We could also plot this correlation matrix as a heatmap. Heatmap instead of a corrplot helps to see the differences between samples more easily. The annotation_col argument helps to display sample annotations and the cutree_cols argument is set to 2 to split the clusters into two groups based on the hierarchical clustering results.
 # split the clusters into two based on the clustering similarity
 pheatmap(correlationMatrix, annotation_col = colData, cutree_cols = 2)
+## Figure will show the pairwise correlation of samples displayed as a heatmap
+#
+# Differential expression analysis
+Differential expression analysis allows us to test tens of thousands of hypotheses (one test for each gene) against null hypotheses that the activity of the gene stays the same in two different conditions.
+## How DESeq2 workflow calculates differential expression:
+1. The read counts are normalized by computing size factors, which address the differences not only in the library sizes, but also the library compositions.
+2. For each gene, a disperssion estimate is calculated. The disperssion value computed by DESeq2 is equal to the squared coefficient of variation (variation divided by the mean)
+3. A line is fit accorss the disperssion estimates of all the genes computed in step 2 versus the mean normaized counts of the genes.
+4.Disperssion values of each gene are shrunk towards the fitted line in step 3.
+5. A generalised Linear Model is fiited which considers additional confounding variables related to the experimental design such as sequencing batches, treatment, temperature, patient's age, sequencing technology, etc., and uses the negative binomial distribution for fitting count data.
+6. For a givem contrast (e.g. treatment type: drug-A versus untreated), a test for differential expression is carried out against the null hypothesis that log fold change of normalised counts of a gene in the given pair of groups is exactly zero.
+7. It adjusts p-values for mutiple-testing
+
+
+
 
 
 

@@ -88,14 +88,14 @@ In order to carry DEA using DESeq2, three kinds of inputs are necessary:
 2. coldata table: defines the experimental design.
 3. design formula: needed to describe variable of interest in the analysis (e.g treatment status) along with (optionally) other covariates (e.g. batch, temperature, sequencing technology).
 s (e.g. batch, temperature, sequencing technology).
-Let’s define these inputs:
+## Let’s define these inputs:
 # remove the 'width' column
 countData <- as.matrix(subset(counts, select = c(-width)))
 #define the experimental setup
 colData <- read.table(coldata_file, header = T, sep = '\t', stringsAsFactors = TRUE)
 #define the design formula
 designFormula <- "~ group"
-Now, we are ready to run DESeq2
+# Now, we are ready to run DESeq2
 library(DESeq2)
 library(stats)
 #create a DESeq dataset object from the count matrix and the colData
@@ -104,7 +104,18 @@ colData = colData,
 design = as.formula(designFormula))
 #print dds object to see the contents
 print(dds)
-
+# Remove genes that have almost no information in any of the given samples
+# For each gene, we count the total number of reads for that gene in all samples and remove those that don't have at least 1 read.
+dds <- dds[ rowSums(DESeq2::counts(dds)) > 1,]
+dds <- DESeq(dds)
+# compute the contrast for the 'group' variable where 'CTRL'
+# samples are used as the control group.
+DEresults = results(dds, contrast = c("group", 'CASE', 'CTRL'))
+#sort results by increasing p-value
+DEresults <- DEresults[order(DEresults$pvalue),]
+# Thus we have obtained a table containing the differential expression status of case samples compared to the control samples.
+# shows a summary of the results
+print(DEresults)
 
 
 

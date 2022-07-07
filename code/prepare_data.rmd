@@ -80,7 +80,7 @@ Differential expression analysis allows us to test tens of thousands of hypothes
 2. For each gene, a disperssion estimate is calculated. The disperssion value computed by DESeq2 is equal to the squared coefficient of variation (variation divided by the mean)
 3. A line is fit accorss the disperssion estimates of all the genes computed in step 2 versus the mean normaized counts of the genes.
 4.Disperssion values of each gene are shrunk towards the fitted line in step 3.
-5. A generalised Linear Model is fiited which considers additional confounding variables related to the experimental design such as sequencing batches, treatment, temperature, patient's age, sequencing technology, etc., and uses the negative binomial distribution for fitting count data.
+5. A generalised Linear Model is fiited which considers additional confounding variables related to the experimental design such as sequencing batches, treatment, temperature, patients age, sequencing technology, etc., and uses the negative binomial distribution for fitting count data.
 6. For a givem contrast (e.g. treatment type: drug-A versus untreated), a test for differential expression is carried out against the null hypothesis that log fold change of normalised counts of a gene in the given pair of groups is exactly zero.
 7. It adjusts p-values for mutiple-testing.
 In order to carry DEA using DESeq2, three kinds of inputs are necessary:
@@ -116,6 +116,32 @@ DEresults <- DEresults[order(DEresults$pvalue),]
 # Thus we have obtained a table containing the differential expression status of case samples compared to the control samples.
 # shows a summary of the results
 print(DEresults)
+
+# Diagnostic plots
+## before proceeding to do any downstream analysis and jumping to conclusions about biological insights that are rechable with experimental data at hand. it is important to do some more diagnostic test to improve our confidence about the quality of the data and experimental setup.
+# MA plot
+# An MA-plot is a plot of log-intensity ratios (M-values) versus log-intensity averages (A-values).
+DESeq2::plotMA(object = dds, ylim = c(-5,5))
+# p-value distribution
+# observe the distribution of raw p-values
+library(ggplot2)
+# FIGURE: P-value distribution genes before adjusting for multiple testing.
+ggplot(data = as.data.frame(DEresults), aes(x = pvalue)) + geom_histogram(bins = 100)
+#
+# PCA plot
+# A final diagnosis is to check the biological reproducibility of the sample replicates in a PCA plot or a heatmap.
+# To plot the PCA results, we need to extract the normalized counts from the DESeqDataSet object. It is possible to color the points in the scatter plot by the variable of interest, which helps to see if the replicates cluster well.
+# extract normalized counts from the DESeqDataSet object
+countsNormalized <- DESeq2::counts(dds, normalized = TRUE)
+# select top 500 most variable genes
+selectedGenes <- names(sort(apply(countsNormalized, 1, var),
+decreasing = TRUE)[1:500])
+#Figure: PCA plot of top 500 most variable genes
+plotPCA(countsNormalized[selectedGenes,],
+col = as.numeric(colData$group), adj = 0.5,
+xlim = c(-0.5, 0.5), ylim = c(-0.5, 0.6))
+Alternatively, the normalized counts can be transformed using the DESeq2::rlog
+function and DESeq2::plotPCA() can be readily used to plot the PCA results 
 
 
 

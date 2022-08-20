@@ -1,8 +1,10 @@
 # Variant Calling Pipeline using GATK4
 Published by Mohammed Khalfan on 2020-03-25 [Variant Calling](https://gencore.bio.nyu.edu/variant-calling-pipeline-gatk4/).<br>
 
-This is an updated version of the variant calling pipeline post published in 2016 (link). This updated version employs GATK4 and is available as a containerized Nextflow script on GitHub.
+Variant Calling Pipeline Using GATK4 and Nextflow
 
-Identifying genomic variants, including single nucleotide polymorphisms (SNPs) and DNA insertions and deletions (indels), from next generation sequencing data is an important part of scientific discovery. At the NYU Center for Genomics and Systems Biology (CGSB) this task is central to many research programs. For example, the Carlton Lab analyzes SNP data to study population genetics of the malaria parasites Plasmodium falciparum and Plasmodium vivax. The Gresham Lab uses SNP and indel data to study adaptive evolution in yeast, and the Lupoli Lab in the Department of Chemistry uses variant analysis to study antibiotic resistance in E. coli. 
+This repo contains a Nextflow script for variant detection using GATK4. Full details including a description of the analysis and how to use the [script]: (https://gencore.bio.nyu.edu/variant-calling-pipeline-gatk4/)
 
-To facilitate this research, a bioinformatics pipeline has been developed to enable researchers to accurately and rapidly identify, and annotate, sequence variants. The pipeline employs the Genome Analysis Toolkit 4 (GATK4) to perform variant calling and is based on the best practices for variant discovery analysis outlined by the Broad Institute. Once SNPs have been identified, SnpEff is used to annotate, and predict, variant effects. 
+Overview of the workflow:
+
+[Workflow](https://camo.githubusercontent.com/f5f0ffee67ece6ff8077f86df1f6dc951f8cc9149de4a41335b1eab085ed9130/68747470733a2f2f67656e636f72652e62696f2e6e79752e6564752f77702d636f6e74656e742f75706c6f6164732f323032302f30332f56617269616e742d43616c6c696e672d506970656c696e652d4741544b342d312e706e67)

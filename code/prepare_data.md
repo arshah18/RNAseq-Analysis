@@ -9,6 +9,7 @@ counts <- as.matrix(read.table(counts_file, header = T, sep = '\t'))
 # Computing CPM
 cpm <- apply(subset(counts, select = c(-width)), 2 ,function(x) x/sum(as.numeric(x)) * 10^6)
 colSums(cpm)
+
 #
 # Computing RPKM
 # Create a vector of gene lengths
@@ -17,6 +18,7 @@ geneLengths <- as.vector(subset(counts, select = c(width)))
 rpkm <- apply(X = subset(counts, select = c(-width)), MARGIN = 2, FUN = function(x) {
                   10^9 * x / geneLengths / sum(as.numeric(x))})
 colSums(rpkm)
+
 #
 # Computing the TPM
 # Find gene length normalised values
@@ -24,6 +26,8 @@ rpk <- apply( subset(counts, select = c(-width)), 2 , function(x) x/(geneLengths
 # normalised by sample size using rpk values
 tpm <- apply(rpk, 2 , function(x) x / sum(as.numeric(x)) * 10^6)
 colSums(tpm)
+
+
 #
 # Clustering
 # Let’s select the top 100 most variable genes among the samples
@@ -36,7 +40,9 @@ selectedGenes <- names(V[order(V, decreasing = T)][1:100])
 pm, 1, var)
 # Sort the results by variance in decreasing order
 #and select the top 100 genes
+
 selectedGenes <- names(V[order(V, decreasing = T)][1:100])
+
 # we can quickly produce a heatmap where samples and genes are clustered
 library(pheatmap)
 pheatmap(tpm[selectedGenes,], scale = 'row', show_rownames = FALSE)
@@ -46,6 +52,8 @@ stringsAsFactors = TRUE)
 pheatmap(tpm[selectedGenes,], scale = 'row',
 show_rownames = FALSE,
 annotation_col = colData)
+
+
 #
 # PCA
 # Let’s make a PCA plot to see the clustering of replicates as a scatter plot in two dimensions
@@ -61,6 +69,8 @@ pcaResults <- prcomp(M)
 # ggfortify is needed to let ggplot2 know about PCA data structure.
 autoplot(pcaResults, data = colData, colour = 'group')
 summary(pcaResults)
+
+
 #
 # Corellation plots
 correlationMatrix <- cor(tpm)
@@ -127,6 +137,8 @@ DESeq2::plotMA(object = dds, ylim = c(-5,5))
 library(ggplot2)
 # FIGURE: P-value distribution genes before adjusting for multiple testing.
 ggplot(data = as.data.frame(DEresults), aes(x = pvalue)) + geom_histogram(bins = 100)
+
+
 #
 # PCA plot
 # A final diagnosis is to check the biological reproducibility of the sample replicates in a PCA plot or a heatmap.

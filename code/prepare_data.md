@@ -1,4 +1,5 @@
 # Computing Different Normalization Schemes in R
+
 ```{r}
 # The original data can found from recount2 database (https://jhubiostatistics.shinyapps.io/recount/) using SRA project code SRP029880.
 # colorectal cancer
@@ -53,7 +54,7 @@ pheatmap(tpm[selectedGenes,], scale = 'row',
 show_rownames = FALSE,
 annotation_col = colData)
 ```
-# PCA
+# PCA Plots
 ```{r}
 # Let’s make a PCA plot to see the clustering of replicates as a scatter plot in two dimensions
 library(stats)
@@ -69,7 +70,7 @@ pcaResults <- prcomp(M)
 autoplot(pcaResults, data = colData, colour = 'group')
 summary(pcaResults)
 ```
-# Corellation plots
+# Corellation Plots
 ```{r}
 correlationMatrix <- cor(tpm)
 library(corrplot)
@@ -82,7 +83,7 @@ pheatmap(correlationMatrix, annotation_col = colData, cutree_cols = 2)
 ## Figure will show the pairwise correlation of samples displayed as a heatmap
 ```
 
-# Differential expression analysis
+# Differential Expression Analysis
 ```{r}
 Differential expression analysis allows us to test tens of thousands of hypotheses (one test for each gene) against null hypotheses that the activity of the gene stays the same in two different conditions.
 ## How DESeq2 workflow calculates differential expression:
@@ -99,7 +100,7 @@ In order to carry DEA using DESeq2, three kinds of inputs are necessary:
 3. design formula: needed to describe variable of interest in the analysis (e.g treatment status) along with (optionally) other covariates (e.g. batch, temperature, sequencing technology).
 s (e.g. batch, temperature, sequencing technology).
 ```
-# Let’s define these inputs:
+# Let’s Define these Inputs:
 ```{r}
 # remove the 'width' column
 countData <- as.matrix(subset(counts, select = c(-width)))
@@ -129,7 +130,7 @@ DEresults <- DEresults[order(DEresults$pvalue),]
 # shows a summary of the results
 print(DEresults)
 ```
-# Diagnostic plots
+# Diagnostic Plots
 ```{r}
 ## before proceeding to do any downstream analysis and jumping to conclusions about biological insights that are rechable with experimental data at hand. It is important to do some more diagnostic test to improve our confidence about the quality of the data and experimental setup.
 # MA plot
@@ -141,7 +142,7 @@ library(ggplot2)
 # FIGURE: P-value distribution genes before adjusting for multiple testing.
 ggplot(data = as.data.frame(DEresults), aes(x = pvalue)) + geom_histogram(bins = 100)
 ```
-# PCA plot
+# PCA Plot
 ```{r}
 # A final diagnosis is to check the biological reproducibility of the sample replicates in a PCA plot or a heatmap.
 # To plot the PCA results, we need to extract the normalized counts from the DESeqDataSet object. It is possible to color the points in the scatter plot by the variable of interest, which helps to see if the replicates cluster well.

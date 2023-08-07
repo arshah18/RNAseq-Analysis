@@ -1,4 +1,4 @@
-# Computing different normalization schemes in R
+# Computing Different Normalization Schemes in R
 ```{r}
 # The original data can found from recount2 database (https://jhubiostatistics.shinyapps.io/recount/) using SRA project code SRP029880.
 # colorectal cancer

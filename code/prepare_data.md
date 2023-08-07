@@ -5,31 +5,31 @@
 counts_file <- system.file('extdata/rna-seq/SRP029880.raw_counts.tsv',package = 'compGenomRData')
 coldata_file <- system.file('extdata/rna-seq/SRP029880.colData.tsv',package = 'compGenomRData')
 counts <- as.matrix(read.table(counts_file, header = T, sep = '\t'))
-#
-# Computing CPM
+```
+# Computing Counts Per Million (CPM)
+```{r}
 cpm <- apply(subset(counts, select = c(-width)), 2 ,function(x) x/sum(as.numeric(x)) * 10^6)
 colSums(cpm)
-
-#
-# Computing RPKM
+```
+# Computing Reads Per Kilobase Million (RPKM)
+```{r}
 # Create a vector of gene lengths
 geneLengths <- as.vector(subset(counts, select = c(width)))
 # Compute the rpkm
 rpkm <- apply(X = subset(counts, select = c(-width)), MARGIN = 2, FUN = function(x) {
                   10^9 * x / geneLengths / sum(as.numeric(x))})
 colSums(rpkm)
-
-#
-# Computing the TPM
+```
+# Computing Transcripts Per Million (TPM)
+```{r}
 # Find gene length normalised values
 rpk <- apply( subset(counts, select = c(-width)), 2 , function(x) x/(geneLengths/1000))
 # normalised by sample size using rpk values
 tpm <- apply(rpk, 2 , function(x) x / sum(as.numeric(x)) * 10^6)
 colSums(tpm)
-
-
-#
+```
 # Clustering
+```{r}
 # Let’s select the top 100 most variable genes among the samples
 # compute the variance of each gene across samples
 V <- apply(tpm, 1, var)
@@ -52,10 +52,9 @@ stringsAsFactors = TRUE)
 pheatmap(tpm[selectedGenes,], scale = 'row',
 show_rownames = FALSE,
 annotation_col = colData)
-
-
-#
+```
 # PCA
+```{r}
 # Let’s make a PCA plot to see the clustering of replicates as a scatter plot in two dimensions
 library(stats)
 library(ggplot2)
@@ -69,10 +68,9 @@ pcaResults <- prcomp(M)
 # ggfortify is needed to let ggplot2 know about PCA data structure.
 autoplot(pcaResults, data = colData, colour = 'group')
 summary(pcaResults)
-
-
-#
+```
 # Corellation plots
+```{r}
 correlationMatrix <- cor(tpm)
 library(corrplot)
 corrplot(correlationMatrix, order = 'hclust' ,
@@ -82,8 +80,10 @@ corrplot(correlationMatrix, order = 'hclust' ,
 # split the clusters into two based on the clustering similarity
 pheatmap(correlationMatrix, annotation_col = colData, cutree_cols = 2)
 ## Figure will show the pairwise correlation of samples displayed as a heatmap
-#
+```
+
 # Differential expression analysis
+```{r}
 Differential expression analysis allows us to test tens of thousands of hypotheses (one test for each gene) against null hypotheses that the activity of the gene stays the same in two different conditions.
 ## How DESeq2 workflow calculates differential expression:
 1. The read counts are normalized by computing size factors, which address the differences not only in the library sizes, but also the library compositions.
@@ -98,7 +98,9 @@ In order to carry DEA using DESeq2, three kinds of inputs are necessary:
 2. coldata table: defines the experimental design.
 3. design formula: needed to describe variable of interest in the analysis (e.g treatment status) along with (optionally) other covariates (e.g. batch, temperature, sequencing technology).
 s (e.g. batch, temperature, sequencing technology).
-## Let’s define these inputs:
+```
+# Let’s define these inputs:
+```{r}
 # remove the 'width' column
 countData <- as.matrix(subset(counts, select = c(-width)))
 #define the experimental setup
@@ -126,9 +128,10 @@ DEresults <- DEresults[order(DEresults$pvalue),]
 # Thus we have obtained a table containing the differential expression status of case samples compared to the control samples.
 # shows a summary of the results
 print(DEresults)
-
+```
 # Diagnostic plots
-## before proceeding to do any downstream analysis and jumping to conclusions about biological insights that are rechable with experimental data at hand. it is important to do some more diagnostic test to improve our confidence about the quality of the data and experimental setup.
+```{r}
+## before proceeding to do any downstream analysis and jumping to conclusions about biological insights that are rechable with experimental data at hand. It is important to do some more diagnostic test to improve our confidence about the quality of the data and experimental setup.
 # MA plot
 # An MA-plot is a plot of log-intensity ratios (M-values) versus log-intensity averages (A-values).
 DESeq2::plotMA(object = dds, ylim = c(-5,5))
@@ -137,10 +140,9 @@ DESeq2::plotMA(object = dds, ylim = c(-5,5))
 library(ggplot2)
 # FIGURE: P-value distribution genes before adjusting for multiple testing.
 ggplot(data = as.data.frame(DEresults), aes(x = pvalue)) + geom_histogram(bins = 100)
-
-
-#
+```
 # PCA plot
+```{r}
 # A final diagnosis is to check the biological reproducibility of the sample replicates in a PCA plot or a heatmap.
 # To plot the PCA results, we need to extract the normalized counts from the DESeqDataSet object. It is possible to color the points in the scatter plot by the variable of interest, which helps to see if the replicates cluster well.
 # extract normalized counts from the DESeqDataSet object
@@ -154,20 +156,4 @@ col = as.numeric(colData$group), adj = 0.5,
 xlim = c(-0.5, 0.5), ylim = c(-0.5, 0.6))
 Alternatively, the normalized counts can be transformed using the DESeq2::rlog
 function and DESeq2::plotPCA() can be readily used to plot the PCA results 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 ```
-#

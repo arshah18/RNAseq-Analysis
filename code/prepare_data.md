@@ -16,6 +16,7 @@ colSums(cpm)
 ```{r}
 # Create a vector of gene lengths
 geneLengths <- as.vector(subset(counts, select = c(width)))
+
 # Compute the rpkm
 rpkm <- apply(X = subset(counts, select = c(-width)), MARGIN = 2, FUN = function(x) {
                   10^9 * x / geneLengths / sum(as.numeric(x))})
